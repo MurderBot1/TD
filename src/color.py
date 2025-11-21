@@ -4,6 +4,9 @@ class color:
         self.g = g
         self.b = b
         pass
+
+    def get(self):
+        return [self.r, self.g, self.b]
     
 # basic colors
 RED = color(255, 0, 0)

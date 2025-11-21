@@ -2,6 +2,7 @@ import os
 import numpy as np
 from enum import Enum
 from PIL import Image
+import color
 
 class TileType(Enum):
     ALL_OPEN = 1
@@ -103,9 +104,33 @@ class TextureHolder:
         img = Image.fromarray(arr.astype(np.uint8), mode="RGB")
         img.save(filename)
 
+class BackgroundBuilder:
+    def __init__(self, colors : list, texture):
+        self.texture = np.full((32, 32, 3), colors[0], dtype=np.uint8)
+        pass
+
+    def get(self):
+        pass
+
+class EdgeBuilder:
+    def __init__(self, colors : list, texture):
+        self.texture = np.full((32, 32, 3), colors[0], dtype=np.uint8)
+        pass
+
+    def get(self):
+        pass
+
+class CornerBuilder:
+    def __init__(self, colors : list, texture):
+        self.texture = np.full((32, 32, 3), colors[0], dtype=np.uint8)
+        pass
+    
+    def get(self):
+        pass
+
 class TextureBuilder: 
-    def __init__(self, tile_name, main, edges, corners):
-        self.texture_holder = TextureHolder(main, edges, corners)
+    def __init__(self, tile_name, main : BackgroundBuilder, edges : EdgeBuilder, corners : CornerBuilder):
+        self.texture_holder = TextureHolder(main.get(), edges, corners)
         
         # Ensure the directory exists
         out_dir = os.path.join("assets", tile_name)
@@ -119,7 +144,7 @@ class TextureLoader:
     def __init__(self):
         pass
 
-# TextureBuilder tests
+# TextureBuilder tests (not valid RN)
 # test = TextureBuilder(
 #     "test_texture",
 #     np.full((32, 32, 3), [255, 0, 0], dtype=np.uint8),
