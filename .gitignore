@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 # assets
-/assets
+/assets/generated
 
 # Distribution / packaging
 .Python
