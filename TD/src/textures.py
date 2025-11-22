@@ -70,9 +70,21 @@ class TileGenerator:
     
 class TileGetter:
     @staticmethod
-    def GetTile(tile_name, has_boarder_top, has_boarder_right, has_boarder_bottom, has_boarder_left):
-        mask = (has_boarder_top << 3) | (has_boarder_right << 2) | (has_boarder_bottom << 1) | has_boarder_left
+    def GetTile(tile_name, boarder_top_name, boarder_right_name, boarder_bottom_name, boarder_left_name):
+        mask = 0
+        if boarder_top_name != tile_name:
+            mask |= 8
+        if boarder_right_name != tile_name:
+            mask |= 4
+        if boarder_bottom_name != tile_name:
+            mask |= 2
+        if boarder_left_name != tile_name:
+            mask |= 1
+        
         tile_path = f"assets/generated/{tile_name}/tile_{mask:04b}.bmp"
+        if not os.path.exists(tile_path):
+            raise FileNotFoundError(f"Tile not found: {tile_path}")
+        
         return Image.open(tile_path)
 
 def generate_tiles():
