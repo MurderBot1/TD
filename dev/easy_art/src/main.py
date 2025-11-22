@@ -1,7 +1,7 @@
 import os
 import tkinter as tk
 from tkinter import simpledialog, messagebox, colorchooser, filedialog
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageOps
 
 SCALE = 10
 
@@ -300,27 +300,33 @@ class TextureEditor:
         top, right, bottom, left = [(mask >> i) & 1 for i in (3, 2, 1, 0)]
 
         if top:
+            # Top edge: 0° rotation
             tile.paste(self.edge_img, (0, 0))
-        if bottom:
-            tile.paste(self.edge_img, (0, height - 6))
-        if left:
-            left_edge = self.edge_img.rotate(90, expand=True)  # 6x32
-            tile.paste(left_edge, (0, 0))
         if right:
-            right_edge = self.edge_img.rotate(90, expand=True)  # 6x32
+            # Right edge: 90° rotation
+            right_edge = ImageOps.mirror( self.edge_img.rotate(90, expand=True))
             tile.paste(right_edge, (width - 6, 0))
+        if bottom:
+            # Bottom edge: 180° rotation
+            bottom_edge = self.edge_img.rotate(180, expand=True)
+            tile.paste(bottom_edge, (0, height - 6))
+        if left:
+            # Left edge: 270° rotation
+            left_edge =  ImageOps.mirror(self.edge_img.rotate(270, expand=True))
+            tile.paste(left_edge, (0, 0))
 
-        # Corners (corner_img is 6x6)
-        if top and left:
-            tile.paste(self.corner_img, (0, 0))
+        # Corners (still 6x6, no rotation needed)
         if top and right:
             tile.paste(self.corner_img, (width - 6, 0))
-        if bottom and left:
-            tile.paste(self.corner_img, (0, height - 6))
         if bottom and right:
-            tile.paste(self.corner_img, (width - 6, height - 6))
+            tile.paste(self.corner_img.rotate(270), (width - 6, height - 6))
+        if bottom and left:
+            tile.paste(self.corner_img.rotate(180), (0, height - 6))
+        if top and left:
+            tile.paste(self.corner_img.rotate(90), (0, 0))
 
         return tile
+
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -1,3 +1,4 @@
+import textures
 import pygame, random
 from towers import SniperTower, FreezeTower
 from enemies import FastEnemy, TankEnemy
@@ -31,6 +32,8 @@ def draw_tower_bar(win, selected):
         x_offset += 80
 
 def main():
+    textures.generate_tiles()
+    
     clock = pygame.time.Clock()
     run = True
 

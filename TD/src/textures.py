@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ImageOps
 
 class TileGenerator:
     def __init__(self, tile_name):
@@ -46,7 +46,7 @@ class TileGenerator:
 
         # Bottom edge
         if bottom:
-            tile.paste(self.edge, (0, height - 6))
+            tile.paste(ImageOps.flip(self.edge), (0, height - 6))
 
         # Left edge
         if left:
@@ -54,18 +54,28 @@ class TileGenerator:
 
         # Right edge
         if right:
-            tile.paste(self.edge.rotate(90, expand=True), (width - 6, 0))
+            tile.paste(ImageOps.mirror(self.edge.rotate(90, expand=True)), (width - 6, 0))
 
         # Corners (only if both adjacent sides are closed)
-        if top and left:
-            tile.paste(self.corner, (0, 0))
         if top and right:
             tile.paste(self.corner, (width - 6, 0))
-        if bottom and left:
-            tile.paste(self.corner, (0, height - 6))
         if bottom and right:
-            tile.paste(self.corner, (width - 6, height - 6))
+            tile.paste(self.corner.rotate(270), (width - 6, height - 6))
+        if bottom and left:
+            tile.paste(self.corner.rotate(180), (0, height - 6))
+        if top and left:
+            tile.paste(self.corner.rotate(90), (0, 0))
 
         return tile
+    
+class TileGetter:
+    @staticmethod
+    def GetTile(tile_name, has_boarder_top, has_boarder_right, has_boarder_bottom, has_boarder_left):
+        mask = (has_boarder_top << 3) | (has_boarder_right << 2) | (has_boarder_bottom << 1) | has_boarder_left
+        tile_path = f"assets/generated/{tile_name}/tile_{mask:04b}.bmp"
+        return Image.open(tile_path)
 
-generator = TileGenerator("test_texture").generate_all()
+def generate_tiles():
+    test = TileGenerator("test").generate_all()
+    grass = TileGenerator("grass").generate_all()
+    path = TileGenerator("path").generate_all()
